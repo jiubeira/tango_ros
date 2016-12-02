@@ -23,6 +23,9 @@ android {
             jniDebuggable true
         }
     }
+	  lintOptions {
+	    abortOnError false
+	  }
 }
 
 tasks.withType(JavaCompile) {

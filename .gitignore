@@ -8,6 +8,8 @@
 # Eclipse project files
 *.project
 *.cproject
+*.settings
+*.classpath
 
 # Android Studio project files
 *captures
@@ -44,3 +46,8 @@
 ######################
 *OpenCV_sdk_native/
 *roscpp_android_ndk/
+
+# Automatically generated files
+RosApp/app/src/main/gen/
+RosApp/app/src/main/project.properties
+
