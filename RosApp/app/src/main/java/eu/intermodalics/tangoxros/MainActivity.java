@@ -32,7 +32,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements SetMasterUriDialog.CallbackListener,
+import org.ros.android.RosActivity;
+import org.ros.node.NodeMainExecutor;
+
+public class MainActivity extends RosActivity implements SetMasterUriDialog.CallbackListener,
         TryToReconnectToRosDialog.CallbackListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String MASTER_URI_PREFIX = "__master:=";
@@ -42,6 +45,10 @@ public class MainActivity extends Activity implements SetMasterUriDialog.Callbac
     private String mMasterUri;
     private boolean mIsNodeInitialised = false;
     private PublisherConfiguration mPublishConfig;
+
+    public MainActivity() {
+        super("Example", "Example");
+    }
 
     /**
      * Implements SetMasterUriDialog.CallbackListener.
@@ -204,5 +211,10 @@ public class MainActivity extends Activity implements SetMasterUriDialog.Callbac
             mJniInterface.tangoDisconnect();
             unbindService(mTangoServiceConnection);
         }
+    }
+
+    @Override
+    protected void init(NodeMainExecutor nodeMainExecutor) {
+//        init();
     }
 }
