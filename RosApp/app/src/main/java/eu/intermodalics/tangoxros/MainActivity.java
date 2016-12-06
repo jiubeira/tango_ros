@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.format.Formatter;
@@ -32,8 +33,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.ros.address.InetAddressFactory;
+import org.ros.android.NodeMainExecutorService;
 import org.ros.android.RosActivity;
+import org.ros.node.NodeConfiguration;
+import org.ros.node.NodeMain;
 import org.ros.node.NodeMainExecutor;
+
+import java.net.URI;
 
 public class MainActivity extends RosActivity implements SetMasterUriDialog.CallbackListener,
         TryToReconnectToRosDialog.CallbackListener {
@@ -66,8 +73,54 @@ public class MainActivity extends RosActivity implements SetMasterUriDialog.Call
         editor.putString(getString(R.string.saved_uri_key), mMasterUri);
         editor.commit();
         // Start ROS and node.
-        init();
-        startNode();
+//        init();
+//        startNode();
+
+        rosjavaInit();
+//        startRosjavaNode();
+
+    }
+
+    private void rosjavaInit() {
+        Log.i(TAG, "rosJavaInit was called");
+
+        if (mMasterUri != null) {
+            WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+            String ip_address = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+
+            URI masterUri;
+
+            try {
+                masterUri = URI.create(mMasterUri);
+            } catch (IllegalArgumentException e){
+                Log.e(TAG, "Wrong URI: " + e.getMessage());
+                return;
+            }
+
+            this.nodeMainExecutorService.setMasterUri(masterUri);
+
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    MainActivity.this.init(nodeMainExecutorService);
+                    return null;
+                }
+            }.execute();
+
+
+            /*
+            if (mJniInterface.initRos(MASTER_URI_PREFIX + mMasterUri, IP_PREFIX + ip_address)) {
+                mIsNodeInitialised = initNode();
+            } else {
+                Log.e(TAG, getResources().getString(R.string.tango_ros_error));
+                Toast.makeText(getApplicationContext(), R.string.tango_ros_error, Toast.LENGTH_SHORT).show();
+                showTryToReconnectToRosDialog();
+            }
+            */
+
+        } else {
+            Log.e(TAG, "Master URI is null");
+        }
     }
 
     /**
@@ -143,6 +196,9 @@ public class MainActivity extends RosActivity implements SetMasterUriDialog.Call
     }
 
     public void init() {
+
+        Log.i(TAG, "App init was called");
+
         if (mMasterUri != null) {
             WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
             String ip_address = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
@@ -215,6 +271,18 @@ public class MainActivity extends RosActivity implements SetMasterUriDialog.Call
 
     @Override
     protected void init(NodeMainExecutor nodeMainExecutor) {
-//        init();
+        Log.i(TAG, "Ros init was called");
+
+        NodeMain node = new SimplePublisherNode();
+//        NodeMainExecutorService mainExecutorService = (NodeMainExecutorService) nodeMainExecutor;   // not so good
+
+        NodeConfiguration nodeConfiguration = NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress());
+        nodeConfiguration.setMasterUri(this.nodeMainExecutorService.getMasterUri());
+        nodeMainExecutor.execute(node, nodeConfiguration);
+    }
+
+    @Override
+    public void startMasterChooser() {
+        // onMasterUriConnect already connects to master.
     }
 }
