@@ -35,6 +35,7 @@ task ndkBuild(type: Exec) {
     Properties properties = new Properties()
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
     def ndkbuild = properties.getProperty('ndk.dir', null)+"/ndk-build"
+//    commandLine ndkbuild, '-B',  'V=1', 'NDK_LOG=1', '-C', file('src/main/jni').absolutePath
     commandLine ndkbuild, '-C', file('src/main/jni').absolutePath
 }
 

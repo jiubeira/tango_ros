@@ -30,6 +30,7 @@ public class JNIInterface {
             Log.e("TangoJNINative", "ERROR! Unable to load libtango_client_api.so!");
         }
         System.loadLibrary("tango_ros_android_lib");
+        System.loadLibrary("native_test");
     }
 
     /**
@@ -70,4 +71,6 @@ public class JNIInterface {
      * Publishes the available tango data (device pose, point cloud, images).
      */
     public static native void publish();
+
+    public static native String stringFromJNI();
 }

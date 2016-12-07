@@ -55,6 +55,8 @@ public class MainActivity extends RosActivity implements SetMasterUriDialog.Call
 
     public MainActivity() {
         super("Example", "Example");
+
+        Log.i(TAG, JNIInterface.stringFromJNI());
     }
 
     /**

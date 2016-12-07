@@ -20,6 +20,10 @@ LOCAL_STATIC_LIBRARIES += roscpp_android_ndk googletest_main
 LOCAL_SHARED_LIBRARIES := tango_client_api tango_ros_native
 include $(BUILD_EXECUTABLE)
 
+#$(call import-add-path, $(PROJECT_ROOT)/../third_party)
+#$(call import-module,native_test)
+include $(PROJECT_ROOT)/../third_party/native_test/Android.mk
+
 $(call import-add-path, $(PROJECT_ROOT)/../tango_ros_common)
 $(call import-module,tango_ros_native)
 $(call import-module,third_party/googletest)
