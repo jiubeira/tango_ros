@@ -31,6 +31,7 @@ public class JNIInterface {
         }
         System.loadLibrary("tango_ros_android_lib");
         System.loadLibrary("native_test");
+        System.loadLibrary("native_chatter");
     }
 
     /**
@@ -73,4 +74,6 @@ public class JNIInterface {
     public static native void publish();
 
     public static native String stringFromJNI();
+
+    public static native void nativeChatter();
 }

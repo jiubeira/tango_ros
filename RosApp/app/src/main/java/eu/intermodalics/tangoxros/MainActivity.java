@@ -75,12 +75,15 @@ public class MainActivity extends RosActivity implements SetMasterUriDialog.Call
         editor.putString(getString(R.string.saved_uri_key), mMasterUri);
         editor.commit();
         // Start ROS and node.
+        // Un-Comment out these lines for normal behaviour
 //        init();
 //        startNode();
 
-        rosjavaInit();
-//        startRosjavaNode();
+        // Un-Comment out this line to start rosjava node on connect
+//        rosjavaInit();
 
+        // Un-Comment out this line to start a native chatter node on connect
+        JNIInterface.nativeChatter();
     }
 
     private void rosjavaInit() {
