@@ -41,6 +41,9 @@ public class SimplePublisherNode extends AbstractNodeMain implements NodeMain {
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
+
+        Log.i(TAG, "rosjavaNode SimplePublisherNode OnStart");
+
         final Publisher<String> publisher = connectedNode.newPublisher(GraphName.of("time"), String._TYPE);
 
         final CancellableLoop loop = new CancellableLoop() {
@@ -61,6 +64,10 @@ public class SimplePublisherNode extends AbstractNodeMain implements NodeMain {
             }
         };
         connectedNode.executeCancellableLoop(loop);
+    }
+
+    public SimplePublisherNode() {
+        Log.i(TAG, "Publisher node created");
     }
 
 }

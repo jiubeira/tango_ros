@@ -24,7 +24,7 @@ include $(BUILD_EXECUTABLE)
 #$(call import-module,native_test)
 include $(PROJECT_ROOT)/../third_party/native_test/Android.mk
 include $(PROJECT_ROOT)/../third_party/native_chatter/Android.mk    # call import-module works to solve dependencies, not to add more modules.
-                                                                    # To build more targets, include new makefile here or in gradle file
+include $(PROJECT_ROOT)/../third_party/native_node_test/Android.mk    # To build more targets, include new makefile here or in gradle file
 
 $(call import-add-path, $(PROJECT_ROOT)/../tango_ros_common)        # These are build when import-module is called because they are listed as dependencies
 $(call import-module,tango_ros_native)                              # to build tango_ros_android_lib & native, as described above.

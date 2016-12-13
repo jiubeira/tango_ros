@@ -16,7 +16,6 @@
 
 package eu.intermodalics.tangoxros;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -34,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ros.address.InetAddressFactory;
-import org.ros.android.NodeMainExecutorService;
 import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMain;
@@ -80,10 +78,10 @@ public class MainActivity extends RosActivity implements SetMasterUriDialog.Call
 //        startNode();
 
         // Un-Comment out this line to start rosjava node on connect
-//        rosjavaInit();
+        rosjavaInit();
 
         // Un-Comment out this line to start a native chatter node on connect
-        JNIInterface.nativeChatter();
+//        JNIInterface.nativeChatter();
     }
 
     private void rosjavaInit() {
@@ -278,12 +276,24 @@ public class MainActivity extends RosActivity implements SetMasterUriDialog.Call
     protected void init(NodeMainExecutor nodeMainExecutor) {
         Log.i(TAG, "Ros init was called");
 
-        NodeMain node = new SimplePublisherNode();
-//        NodeMainExecutorService mainExecutorService = (NodeMainExecutorService) nodeMainExecutor;   // not so good
+//        NodeMain node = createSimplePublisher();      // Comment one of these lines to select native or pure java node to run
+        NodeMain node = createNativeNodeTest();
+        runMainNode(nodeMainExecutor, node);
+    }
 
+    protected void runMainNode(NodeMainExecutor nodeMainExecutor, NodeMain node) {
         NodeConfiguration nodeConfiguration = NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress());
         nodeConfiguration.setMasterUri(this.nodeMainExecutorService.getMasterUri());
+        Log.i(TAG, "Executing node");
         nodeMainExecutor.execute(node, nodeConfiguration);
+    }
+
+    protected NodeMain createSimplePublisher() {
+        return new SimplePublisherNode();
+    }
+
+    protected NodeMain createNativeNodeTest() {
+        return new NativeNodeTest();
     }
 
     @Override
