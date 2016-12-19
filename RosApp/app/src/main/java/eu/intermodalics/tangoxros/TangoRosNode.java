@@ -9,10 +9,9 @@ import org.ros.namespace.GraphName;
 public class TangoRosNode extends NativeNodeMain {
 
     private static final String nodeName = "TangoRosNode";
+    private static final String defaultLibName = "tango_ros_android_lib";
 
-    public TangoRosNode() {
-        super("tango_ros_node_native");
-    }
+    public TangoRosNode() { super(defaultLibName); }
 
     public TangoRosNode(String libName) {
         super(libName);

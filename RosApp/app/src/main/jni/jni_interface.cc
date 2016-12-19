@@ -68,7 +68,7 @@ Java_eu_intermodalics_tangoxros_JNIInterface_initNode(JNIEnv* env, jobject /*obj
 JNIEXPORT jboolean JNICALL
 Java_eu_intermodalics_tangoxros_JNIInterface_onTangoServiceConnected(
     JNIEnv* env, jobject /*obj*/, jobject iBinder) {
-  return tango_helper::SetBinder(env, iBinder) && tango_ros->OnTangoServiceConnected();
+  return tango_helper::SetBinder(env, iBinder) /*&& tango_ros->OnTangoServiceConnected()*/; // OnTangoServiceConnected is now called inside Execute.
 }
 
 JNIEXPORT void JNICALL
@@ -79,6 +79,26 @@ Java_eu_intermodalics_tangoxros_JNIInterface_tangoDisconnect(JNIEnv* /*env*/, jo
 JNIEXPORT void JNICALL
 Java_eu_intermodalics_tangoxros_JNIInterface_publish(JNIEnv* /*env*/, jobject /*obj*/) {
   tango_ros->Publish();
+}
+
+JNIEXPORT void JNICALL Java_eu_intermodalics_tangoxros_TangoRosNode_execute
+  (JNIEnv* env, jobject obj, jstring master_uri_value, jstring slave_ip_value, jstring node_name_value, jobjectArray remapping_objects_value) {
+
+  const char* master_uri = env->GetStringUTFChars(master_uri_value, NULL);
+  const char* slave_ip = env->GetStringUTFChars(slave_ip_value, NULL);
+  const char* node_name = env->GetStringUTFChars(node_name_value, NULL);
+
+  tango_ros_util::Execute(master_uri, slave_ip, node_name);
+
+  env->ReleaseStringUTFChars(master_uri_value, master_uri);
+  env->ReleaseStringUTFChars(slave_ip_value, slave_ip);
+  env->ReleaseStringUTFChars(node_name_value, node_name);
+
+}
+
+JNIEXPORT void JNICALL Java_eu_intermodalics_tangoxros_TangoRosNode_shutdown
+  (JNIEnv *, jobject) {
+	// Implementation pending
 }
 
 #ifdef __cplusplus

@@ -60,6 +60,9 @@ struct PublisherConfiguration {
 // Node collecting tango data and publishing it on ros topic.
 class TangoRosNode {
  public:
+
+  TangoRosNode(); // Example constructor with default pose publish
+
   TangoRosNode(PublisherConfiguration publisher_config);
   ~TangoRosNode();
   // Sets the tango config and connects to the tango service.
@@ -83,8 +86,10 @@ class TangoRosNode {
   // @return returns TANGO_SUCCESS if the config was set successfully.
   TangoErrorType TangoSetupConfig();
   // Connects to the tango service and to the necessary callbacks.
-  TangoErrorType TangoConnect();
   // @return returns TANGO_SUCCESS if connecting to tango ended successfully.
+  TangoErrorType TangoConnect();
+
+  void InitPublishers();
 
   TangoConfig tango_config_;
   ros::NodeHandle node_handle_;

@@ -174,8 +174,24 @@ std::string toFrameId(const TangoCoordinateFrameType& tango_frame_type) {
 }  // namespace
 
 namespace tango_ros_node {
+
+TangoRosNode::TangoRosNode() {
+  publisher_config_.publish_device_pose = true;
+  InitPublishers();
+}
+
 TangoRosNode::TangoRosNode(PublisherConfiguration publisher_config) :
     publisher_config_(publisher_config) {
+  InitPublishers();
+}
+
+TangoRosNode::~TangoRosNode() {
+  if (tango_config_ != nullptr) {
+    TangoConfig_free(tango_config_);
+  }
+}
+
+void TangoRosNode::InitPublishers() {
   const  uint32_t queue_size = 1;
   const bool latching = true;
   point_cloud_publisher_ =
@@ -189,12 +205,6 @@ TangoRosNode::TangoRosNode(PublisherConfiguration publisher_config) :
   color_image_publisher_ =
       node_handle_.advertise<sensor_msgs::CompressedImage>(publisher_config_.color_camera_topic,
       queue_size, latching);
-}
-
-TangoRosNode::~TangoRosNode() {
-  if (tango_config_ != nullptr) {
-    TangoConfig_free(tango_config_);
-  }
 }
 
 bool TangoRosNode::OnTangoServiceConnected() {
@@ -471,4 +481,5 @@ void TangoRosNode::OnFrameAvailable(TangoCameraId camera_id, const TangoImageBuf
     }
   }
 }
+
 }

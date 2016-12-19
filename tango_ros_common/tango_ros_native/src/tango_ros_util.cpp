@@ -12,19 +12,50 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include "tango_ros_native/tango_ros_util.h"
+#include "tango_ros_native/tango_ros_node.h"
 
 #include <string.h>
 
 #include <glog/logging.h>
+#include <exception>
 
 namespace tango_ros_util {
 
-bool InitRos(const char* master_uri, const char* slave_ip) {
+
+
+
+void Execute(const char * master_uri, const char * slave_ip, const char * node_name) {
+
+  if (InitRos(master_uri, slave_ip, node_name) == false) {
+    return;
+  }
+
+  tango_ros_node::TangoRosNode tangoRosNode;
+
+  tangoRosNode.OnTangoServiceConnected();
+
+  ros::Rate loop_rate(30);
+
+  while(ros::ok()) {
+    tangoRosNode.Publish();
+    loop_rate.sleep();
+  }
+
+}
+
+bool InitRos(const char * master_uri, const char * slave_ip, const char * node_name) {
   int argc = 3;
   char* master_uri_copy = strdup(master_uri);
   char* slave_ip_copy = strdup(slave_ip);
   char* argv[] = {"nothing_important" , master_uri_copy, slave_ip_copy};
-  ros::init(argc, &argv[0], "tango_x_ros");
+
+  LOG(INFO) << "About to init ros: " << '\n' << "Master: " << master_uri_copy << '\n' << "Slave: " << slave_ip_copy << '\n' << "Name: " << node_name << '\n';
+
+  try {
+    ros::init(argc, &argv[0], "tango_x_ros");   // ros::init is crashing the app - to debug
+  } catch (std::exception& e) {
+    LOG(INFO) << e.what() << '\n';
+  }
   LOG(INFO) << "Master URI: " << ros::master::getURI().c_str();
   free(master_uri_copy);
   free(slave_ip_copy);
@@ -37,7 +68,9 @@ bool InitRos(const char* master_uri, const char* slave_ip) {
   return true;
 }
 
+
 bool IsRosOK() {
   return ros::ok();
 }
+
 }  // namespace tango_ros_util
